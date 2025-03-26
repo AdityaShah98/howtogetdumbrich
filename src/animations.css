@@ -10,6 +10,20 @@
   }
 }
 
+/* Initial fade-in animation for splash screen */
+@keyframes initialFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.initial-fade-in {
+  animation: initialFadeIn 0.3s ease-in forwards;
+}
+
 /* Button hover effect */
 .analyze-btn-animation {
   transition: all 0.3s ease;

@@ -35,12 +35,12 @@ export const useStockAnalysis = () => {
     setLoading(true);
     
     try {
-      // Simulate a more complex calculation with a timeout
+      // Reduce the artificial delay to improve responsiveness
       setTimeout(() => {
         const result = findOptimalTrades(stockData, startDate, endDate || undefined);
         setResult(result);
         setLoading(false);
-      }, 500); // Artificial delay to show loading state
+      }, 300); // Reduced artificial delay to improve user experience
     } catch (error) {
       console.error('Error calculating optimal trades:', error);
       setLoading(false);
