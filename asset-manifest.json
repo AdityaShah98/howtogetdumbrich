@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "/howtogetdumbrich/static/css/main.69422082.css",
+    "main.js": "/howtogetdumbrich/static/js/main.e2523119.js",
+    "static/js/676.f04b1292.chunk.js": "/howtogetdumbrich/static/js/676.f04b1292.chunk.js",
+    "static/js/453.37046d0d.chunk.js": "/howtogetdumbrich/static/js/453.37046d0d.chunk.js",
+    "static/js/270.d3187198.chunk.js": "/howtogetdumbrich/static/js/270.d3187198.chunk.js",
+    "index.html": "/howtogetdumbrich/index.html",
+    "main.69422082.css.map": "/howtogetdumbrich/static/css/main.69422082.css.map",
+    "main.e2523119.js.map": "/howtogetdumbrich/static/js/main.e2523119.js.map",
+    "676.f04b1292.chunk.js.map": "/howtogetdumbrich/static/js/676.f04b1292.chunk.js.map",
+    "453.37046d0d.chunk.js.map": "/howtogetdumbrich/static/js/453.37046d0d.chunk.js.map",
+    "270.d3187198.chunk.js.map": "/howtogetdumbrich/static/js/270.d3187198.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.69422082.css",
+    "static/js/main.e2523119.js"
+  ]
+}
