@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { gsap } from 'gsap';
 import '../animations.css';
@@ -89,11 +89,28 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
   const dollarSymbolsRef = useRef<HTMLDivElement>(null);
+  const [animationPreloaded, setAnimationPreloaded] = useState(false);
 
+  // Preload GSAP animations before component is fully mounted
   useEffect(() => {
-    if (!titleRef.current) return;
+    // Preload GSAP and initialize it immediately
+    gsap.config({ nullTargetWarn: false });
+    gsap.ticker.lagSmoothing(0); // Reduce lag during initial animation
+    setAnimationPreloaded(true);
     
-    // Create dollar symbols for the animation
+    // Pre-create the animation timeline to have it ready
+    const tl = gsap.timeline();
+    return () => {
+      // Clean up timeline on unmount
+      tl.kill();
+    };
+  }, []);
+
+  // Main animation effect runs after animations are preloaded
+  useEffect(() => {
+    if (!animationPreloaded) return;
+    
+    // Create dollar symbols for the animation immediately
     if (dollarSymbolsRef.current) {
       for (let i = 0; i < 5; i++) {
         const symbol = document.createElement('div');
@@ -108,20 +125,20 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
       }
     }
 
-    // Create a main timeline
+    // Create a main timeline - start immediately without delay
     const tl = gsap.timeline({
       onComplete: () => {
-        // When animation completes, animate out the splash screen
+        // When animation completes, animate out the splash screen (fade it out)
         gsap.to(containerRef.current, {
           opacity: 0,
           duration: 0.8,
-          delay: 3,
+          delay: 2, // Keep the 3 second delay before transitioning out
           onComplete
         });
       }
     });
 
-    // Animate the background
+    // Animate the background immediately
     tl.fromTo(backgroundRef.current, {
       backgroundPosition: '0% 0%',
     }, {
@@ -130,22 +147,24 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
       ease: "power1.inOut"
     }, 0);
 
-    // Initial setup - hide all characters
-    gsap.set(charRefs.current, { 
-      opacity: 0, 
-      scale: 0,
-      y: -20 
-    });
-    
-    // Animate in each character of the title
-    tl.to(charRefs.current, {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      duration: 0.03,
-      stagger: 0.03,
-      ease: "back.out(3)"
-    });
+    // Initial setup - show characters with opacity 0 but ready to animate
+    if (charRefs.current.length > 0) {
+      gsap.set(charRefs.current, { 
+        opacity: 0, 
+        scale: 0,
+        y: -20 
+      });
+      
+      // Start animation immediately
+      tl.to(charRefs.current, {
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        duration: 0.03,
+        stagger: 0.03,
+        ease: "back.out(3)"
+      }, 0.5); // Small delay to ensure DOM is ready
+    }
 
     // Add a bounce effect to rich with dollar sign animation
     const richWord = wordRefs.current[4]; // "Rich" is the 5th word (index 4)
@@ -190,27 +209,19 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
     }
 
     // Animate in the subtitle
-    tl.to(subtitleRef.current, {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: "power2.out"
-    }, "-=0.4");
+    if (subtitleRef.current) {
+      tl.to(subtitleRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power2.out"
+      }, "-=4");
+    }
 
-  }, [onComplete]);
-
-  // Add "Rich" to the title text with a dollar sign
-  // const titleWithDollarSign = (text: string) => {
-  //   const words = text.split(' ');
-  //   if (words.length > 0) {
-  //     // Add dollar sign to "Rich"
-  //     words[words.length-1] = "$" + words[words.length-1];
-  //   }
-  //   return words.join(' ');
-  // };
+  }, [onComplete, animationPreloaded]);
 
   return (
-    <SplashContainer ref={containerRef}>
+    <SplashContainer ref={containerRef} className="initial-fade-in">
       <AnimatedBackground ref={backgroundRef} className="splash-gradient" />
       <Content>
         <Title ref={titleRef} className="shine-effect">
