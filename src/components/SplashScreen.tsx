@@ -129,11 +129,11 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ exitSplash }) => {
     // Create a main timeline - start immediately without delay
     const tl = gsap.timeline({
       onComplete: () => {
-        // When animation completes, animate out the splash screen (fade it out)
+        // When animation completes, animate out the splash screen (fade out)
         gsap.to(containerRef.current, {
           opacity: 0, //this isnt fading everything out
-          duration: 3,
-          delay: 2, // Keep the 3 second delay before transitioning out
+          duration: 1,
+          delay: 1, // Keep the 3 second delay before transitioning out
           onComplete: exitSplash
         });
       }
@@ -199,14 +199,14 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ exitSplash }) => {
             });
           }
         }
-      }, "+=0.2");
+      }, "-=1");
       
       tl.to(richWord, {
         scale: 1,
         color: "#333",
         duration: 0.3,
         ease: "power2.out"
-      }, "+=0.4");
+      }, "-=0.8");
     }
 
     // Animate in the subtitle
