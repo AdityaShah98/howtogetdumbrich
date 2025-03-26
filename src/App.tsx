@@ -1,15 +1,23 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import DatePicker from './components/DatePicker';
 import TradeList from './components/TradeList';
 import ReturnChart from './components/ReturnChart';
+import SplashScreen from './components/SplashScreen';
 import { useStockAnalysis } from './hooks/useStockAnalysis';
+import './animations.css';
 
 const AppContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  opacity: 0;
+  transition: opacity 0.6s ease-in;
+  
+  &.visible {
+    opacity: 1;
+  }
 `;
 
 const Header = styled.header`
@@ -45,16 +53,22 @@ const AnalyzeButton = styled.button`
   font-weight: 600;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
   width: 100%;
   
   &:hover {
     background-color: #388E3C;
+    transform: translateY(-2px);
+  }
+  
+  &:active {
+    transform: translateY(1px);
   }
 
   &:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
+    transform: none;
   }
 `;
 
@@ -72,7 +86,22 @@ const Footer = styled.footer`
   font-size: 0.9rem;
 `;
 
+// Simple app with just the essentials for the landing page
+const LandingContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  max-width: 800px;
+  margin: 0 auto;
+`;
+
 function App() {
+  const [showSplash, setShowSplash] = useState(true);
+  const [contentVisible, setContentVisible] = useState(false);
+  const [showFullApp, setShowFullApp] = useState(false);
+  
   const {
     startDate,
     setStartDate,
@@ -84,9 +113,25 @@ function App() {
     dateRange
   } = useStockAnalysis();
 
-  // Initially calculate trades on component mount
+  // Handle splash screen completion
+  const handleSplashComplete = () => {
+    setShowSplash(false);
+    // After splash screen is gone, fade in the content
+    setTimeout(() => {
+      setContentVisible(true);
+    }, 100);
+  };
+
+  // Handle analyze button click
+  const handleAnalyze = () => {
+    calculateOptimalTrades();
+    setShowFullApp(true);
+  };
+
+  // Initially calculate trades on component mount (for background data loading)
   useEffect(() => {
     if (startDate && !result) {
+      // Silently load data in the background
       calculateOptimalTrades();
     }
   }, [startDate, result, calculateOptimalTrades]);
@@ -95,49 +140,91 @@ function App() {
     return <LoadingMessage>Loading stock data...</LoadingMessage>;
   }
 
+  // Show splash screen if needed
+  if (showSplash) {
+    return <SplashScreen onComplete={handleSplashComplete} />;
+  }
+
   return (
-    <AppContainer>
-      <Header>
-        <Title>How To Get Dumb Rich</Title>
-        <Subtitle>
-          Find the perfect sequence of trades across all stocks to maximize returns
-        </Subtitle>
-      </Header>
+    <AppContainer className={contentVisible ? 'visible' : ''}>
+      {!showFullApp ? (
+        // Landing content with just the essentials
+        <LandingContent>
+          <Header>
+            <Title>How To Get Dumb Rich</Title>
+            <Subtitle>
+              Find the perfect sequence of trades across all stocks to maximize returns
+            </Subtitle>
+          </Header>
 
-      <DatePickersContainer>
-        <DatePicker
-          selectedDate={startDate}
-          onDateChange={setStartDate}
-          label="Start Date"
-        />
-        <DatePicker
-          selectedDate={endDate}
-          onDateChange={setEndDate}
-          label="End Date"
-        />
-      </DatePickersContainer>
+          <DatePickersContainer>
+            <DatePicker
+              selectedDate={startDate}
+              onDateChange={setStartDate}
+              label="Start Date"
+            />
+            <DatePicker
+              selectedDate={endDate}
+              onDateChange={setEndDate}
+              label="End Date"
+            />
+          </DatePickersContainer>
 
-      <AnalyzeButton
-        onClick={calculateOptimalTrades}
-        disabled={loading}
-      >
-        {loading ? 'Analyzing...' : 'Analyze Optimal Trades'}
-      </AnalyzeButton>
-
-      {loading && <LoadingMessage>Analyzing stock data for optimal trades...</LoadingMessage>}
-
-      {result && !loading && (
+          <AnalyzeButton
+            onClick={handleAnalyze}
+            disabled={loading}
+            className="analyze-btn-animation"
+          >
+            {loading ? 'Analyzing...' : 'Analyze Optimal Trades'}
+          </AnalyzeButton>
+        </LandingContent>
+      ) : (
+        // Full app content after analysis
         <>
-          <TradeList trades={result.trades} totalReturn={result.totalReturn} />
-          <ReturnChart data={result.returnData} />
+          <Header>
+            <Title>How To Get Dumb Rich</Title>
+            <Subtitle>
+              Find the perfect sequence of trades across all stocks to maximize returns
+            </Subtitle>
+          </Header>
+
+          <DatePickersContainer>
+            <DatePicker
+              selectedDate={startDate}
+              onDateChange={setStartDate}
+              label="Start Date"
+            />
+            <DatePicker
+              selectedDate={endDate}
+              onDateChange={setEndDate}
+              label="End Date"
+            />
+          </DatePickersContainer>
+
+          <AnalyzeButton
+            onClick={calculateOptimalTrades}
+            disabled={loading}
+            className="analyze-btn-animation"
+          >
+            {loading ? 'Analyzing...' : 'Analyze Optimal Trades'}
+          </AnalyzeButton>
+
+          {loading && <LoadingMessage>Analyzing stock data for optimal trades...</LoadingMessage>}
+
+          {result && !loading && (
+            <>
+              <TradeList trades={result.trades} totalReturn={result.totalReturn} />
+              <ReturnChart data={result.returnData} />
+            </>
+          )}
+
+          <Footer>
+            Sample data includes AAPL, MSFT, and GOOGL stocks from January 2023.
+            Algorithm finds the optimal sequence of trades across all stocks, as if you could time the market perfectly.
+            Results are for educational purposes only and not financial advice.
+          </Footer>
         </>
       )}
-
-      <Footer>
-        Sample data includes AAPL, MSFT, and GOOGL stocks from January 2023.
-        Algorithm finds the optimal sequence of trades across all stocks, as if you could time the market perfectly.
-        Results are for educational purposes only and not financial advice.
-      </Footer>
     </AppContainer>
   );
 }
