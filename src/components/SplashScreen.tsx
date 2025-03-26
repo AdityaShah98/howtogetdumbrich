@@ -113,12 +113,12 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ exitSplash }) => {
     
     // Create dollar symbols for the animation immediately
     if (dollarSymbolsRef.current) {
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 20; i++) {
         const symbol = document.createElement('div');
         symbol.textContent = '$';
         symbol.style.position = 'absolute';
         symbol.style.top = '0';
-        symbol.style.left = `${i * 20 - 40}px`; 
+        symbol.style.left = `${i%5 * 20 - 40}px`;
         symbol.style.color = '#4CAF50';
         symbol.style.opacity = '0';
         symbol.className = 'dollar-rain';
