@@ -100,7 +100,7 @@ function App() {
       <Header>
         <Title>How To Get Dumb Rich</Title>
         <Subtitle>
-          Find optimal historical stock trades to maximize your returns
+          Find the perfect sequence of trades across all stocks to maximize returns
         </Subtitle>
       </Header>
 
@@ -135,6 +135,7 @@ function App() {
 
       <Footer>
         Sample data includes AAPL, MSFT, and GOOGL stocks from January 2023.
+        Algorithm finds the optimal sequence of trades across all stocks, as if you could time the market perfectly.
         Results are for educational purposes only and not financial advice.
       </Footer>
     </AppContainer>
