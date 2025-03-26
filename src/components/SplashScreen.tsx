@@ -266,7 +266,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ exitSplash }) => {
           ))}
         </Title>
         <Subtitle ref={subtitleRef}>
-          Find the perfect sequence of trades across all stocks to maximize returns
+          How much cash could you have made?
         </Subtitle>
       </Content>
     </SplashContainer>
