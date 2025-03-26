@@ -159,9 +159,9 @@ function App() {
   // Show splash screen if needed
   if (showSplash) {
     return (
-      // <Suspense fallback={<LoadingFallback className="initial-fade-in">Loading...</LoadingFallback>}>
-        <SplashScreen onComplete={handleSplashComplete} />
-      // </Suspense>
+      <Suspense fallback={<LoadingFallback className="initial-fade-in">Loading...</LoadingFallback>}>
+        <SplashScreen exitSplash={handleSplashComplete} />
+      </Suspense>
     );
   }
 

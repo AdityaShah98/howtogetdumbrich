@@ -4,7 +4,7 @@ import { gsap } from 'gsap';
 import '../animations.css';
 
 interface SplashScreenProps {
-  onComplete: () => void;
+  exitSplash: () => void;
 }
 
 const SplashContainer = styled.div`
@@ -81,7 +81,7 @@ const AnimatedBackground = styled.div`
   z-index: -1;
 `;
 
-const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
+const SplashScreen: React.FC<SplashScreenProps> = ({ exitSplash }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const wordRefs = useRef<HTMLSpanElement[]>([]);
@@ -109,6 +109,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
   // Main animation effect runs after animations are preloaded
   useEffect(() => {
     if (!animationPreloaded) return;
+    if (!containerRef.current) return;
     
     // Create dollar symbols for the animation immediately
     if (dollarSymbolsRef.current) {
@@ -130,10 +131,10 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
       onComplete: () => {
         // When animation completes, animate out the splash screen (fade it out)
         gsap.to(containerRef.current, {
-          opacity: 0,
-          duration: 0.8,
+          opacity: 0, //this isnt fading everything out
+          duration: 3,
           delay: 2, // Keep the 3 second delay before transitioning out
-          onComplete
+          onComplete: exitSplash
         });
       }
     });
@@ -218,7 +219,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
       }, "-=4");
     }
 
-  }, [onComplete, animationPreloaded]);
+  }, [exitSplash, animationPreloaded]);
 
   return (
     <SplashContainer ref={containerRef} className="initial-fade-in">
