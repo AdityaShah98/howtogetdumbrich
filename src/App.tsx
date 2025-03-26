@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, lazy, Suspense } from 'react';
 import styled from 'styled-components';
 import DatePicker from './components/DatePicker';
 import TradeList from './components/TradeList';
 import ReturnChart from './components/ReturnChart';
-import SplashScreen from './components/SplashScreen';
 import { useStockAnalysis } from './hooks/useStockAnalysis';
 import './animations.css';
+
+// Lazy load the SplashScreen component for better initial performance
+const SplashScreen = lazy(() => import('./components/SplashScreen'));
 
 const AppContainer = styled.div`
   max-width: 1200px;
@@ -79,6 +81,20 @@ const LoadingMessage = styled.div`
   color: #666;
 `;
 
+const LoadingFallback = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #4CAF50;
+  background-color: #f8f8f8;
+`;
+
 const Footer = styled.footer`
   margin-top: 4rem;
   text-align: center;
@@ -142,7 +158,11 @@ function App() {
 
   // Show splash screen if needed
   if (showSplash) {
-    return <SplashScreen onComplete={handleSplashComplete} />;
+    return (
+      // <Suspense fallback={<LoadingFallback className="initial-fade-in">Loading...</LoadingFallback>}>
+        <SplashScreen onComplete={handleSplashComplete} />
+      // </Suspense>
+    );
   }
 
   return (
